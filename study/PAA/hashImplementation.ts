@@ -1,10 +1,22 @@
-export default class HashTable{
-    private tamanho: number;
-    private data: ({key: number, removed: boolean}|null)[] = [];
+export type h_node = {key: number, removed: boolean, frequency: number};
+
+export class HashTable{
+    private tamanho: number = 0;
+    private data: (h_node|null)[] = [];
     private hashKey: number;
+    private loadFactor: number = 0;
 
     constructor(tamanho: number) {
         this.tamanho = tamanho;
+        this.hashKey = this.make_hashKey(tamanho);
+        
+        this.data = []
+        for(let i = 0; i < tamanho; i++) {
+            this.data[i] = null;
+        }
+    }
+
+    private make_hashKey(n: number): number {
         const get_primo = (n:number):number => {
             // n = 1 retorna 1;
             if(n == 1) return n;  
@@ -20,7 +32,40 @@ export default class HashTable{
             }
             return n;
         }
-        this.hashKey = get_primo(tamanho);
+        return get_primo(n);
+    }
+
+    private resize() {
+        let newData:(h_node|null)[] = [];
+        const newTamanho = Math.ceil(this.loadFactor * this.tamanho * 2);
+        this.hashKey = this.make_hashKey(newTamanho);
+
+        for(let i = 0; i < newTamanho; i++) {
+            newData[i] = null;
+        }
+
+        this.data
+        .forEach(v => {
+            if(!v) return;
+            let count:number = 0;
+            while(count < newTamanho) {
+                const index:number = this.hash(v.key + count++);
+                const cur = newData[index];
+
+                // não tem nada na posição || tem mas foi removido, então add e sai;
+                if(!cur || cur.removed) {
+                    newData[index] = v;
+                    break;
+                }
+
+                // tem algo e é diferente, então procuramos outra posição
+                if(cur.key != v.key) continue;
+            }
+        })
+
+        this.tamanho = newTamanho;
+        this.loadFactor = newData.filter(v => v!= null).length / newData.length;
+        this.data = newData;
     }
 
     hash(data: number): number {
@@ -29,27 +74,40 @@ export default class HashTable{
 
     insert(value: number): void {
         let count:number = 0;
-        let index:number = 0;
+        const newElement:h_node = {key: value, removed: false, frequency: 1};
 
         while(count < this.tamanho) {
-            index = this.hash(value + count++);
-            if(this.data[index] && !this.data[index]!.removed) continue;
-            this.data[index] = {key: value, removed: false};
-            return;
+            const index:number = this.hash(value + count++) % this.tamanho;
+            const cur = this.data[index];
+
+            // não tem nada na posição || tem mas foi removido, então add e sai;
+            if(!cur || cur.removed) {
+                this.data[index] = newElement;
+                this.loadFactor =  this.loadFactor + 1 / this.tamanho;
+                break;
+            }
+
+            // tem algo e é diferente, então procuramos outra posição
+            if(cur.key != value) continue;
+
+            // tem algo e é igual
+            this.data[index]!.frequency++;
+            break;
         }
 
-        console.log(`Lista cheia, ${value} não foi inserido!`);
+        if(this.loadFactor > 0.7) this.resize();
+        if(count > this.tamanho) console.log(`Error:\n\t-Lista cheia e erro no resize, ${value} não foi inserido!`);
     }
 
     search(value: number):number {
         let count: number = 0;
-        let index: number = 0;
-
+        
         while(count < this.tamanho) {
-            index = this.hash(value + count++);
-            if(!this.data[index]) continue;
-            if(this.data[index]!.key != value || this.data[index]!.removed) continue;
-
+            const index = this.hash(value + count++) % this.tamanho;
+            const cur = this.data[index];
+            if(!cur) return -1;
+            if(cur.key != value || cur.removed) continue;
+            
             return index;
         }
 
@@ -57,10 +115,11 @@ export default class HashTable{
         return -1
     }
 
-    remove(value: number) {
+    remove(value: number):boolean {
         const index = this.search(value);
-        if(index == -1) return;
+        if(index == -1) return false;
         this.data[index]!.removed = true;
+        return true;
     }
 
     printTable():void {
@@ -77,5 +136,9 @@ export default class HashTable{
 
     getHashKey() {
         return this.hashKey;
+    }
+
+    getLoadFactor() {
+        return this.loadFactor;
     }
 }
