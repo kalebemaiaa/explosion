@@ -107,9 +107,3 @@ class LinkedList<T>{
         return this.length;
     }
 }
-
-let ll = new LinkedList();
-for(let i = 0; i < 100; i++) {
-    ll.insertEnd(i);
-}
-console.log(ll.toArray());

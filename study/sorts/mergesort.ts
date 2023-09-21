@@ -1,46 +1,28 @@
-type arrNumber = number[];
+function merge<T>(array1: T[], array2: T[], callback: (a:any, b:any) => number):T[] {
+    let i:number = 0, j:number = 0;
+    const len1 = array1.length, len2 = array2.length;
+    const A:T[] = [];
 
-const merge = (array1: arrNumber, array2: arrNumber):arrNumber => {
-    const len1:number = array1.length;
-    const len2:number = array2.length;
-
-    let w:number = 0;
-    let y:number = 0;
-
-    let arrR:arrNumber = [];
-
-    while(w < len1 && y < len2){
-        if(array1[w] > array2[y]) {
-            arrR.push(array2[y]);
-            y++;
-        }
-        else{
-            arrR.push(array1[w]);
-            w++;
-        }
+    while(i < len1 && j < len2) {
+        if(callback(array1[i], array2[j]) > 0)  A.push(array2[j++]);
+        else A.push(array1[i++]);
     }
 
-    while(w < len1) {
-        arrR.push(array1[w]);
-        w++;
-    }
-
-    while(y < len2) {
-        arrR.push(array2[y]);
-        y++;
-    }
-
-    return arrR;
+    while(i < len1) A.push(array1[i++]);
+    while(j < len2) A.push(array2[j++]);
+    
+    return A;
 }
 
-const mergeSort = (arr:arrNumber):arrNumber => {
+export function mergeSort<T>(arr:T[], callback: (a:any, b:any) => number):T[] {
     const len = arr.length;
-    if(len == 0 || len == 1) return arr;
+    if(len == 0) return [];
+    if(len == 1) return arr;
 
     const mid = len % 2 == 0? len/2 : (len + 1) / 2;
     
-    const arrL = mergeSort(arr.slice(0, mid));
-    const arrR = mergeSort(arr.slice(mid, len));
+    const arrL = mergeSort(arr.slice(0, mid), callback);
+    const arrR = mergeSort(arr.slice(mid, len), callback);
 
-    return merge(arrL, arrR);
+    return merge(arrL, arrR, callback);
 }

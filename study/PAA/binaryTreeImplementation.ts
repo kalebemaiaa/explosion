@@ -1,4 +1,4 @@
-type node = t_node|null;
+export type node = t_node|null;
 
 interface t_node{
     key: number;

@@ -4,32 +4,36 @@
     um da subarvore esquerda e outro da sub ´ arvore direita da raiz, cuja soma ´
     seja igual a x. O algoritmo deve ter complexidade O(n) no pior caso.
 */
-import { binaryTreeSearch } from "./binaryTreeImplementation";
+import { binaryTreeSearch, node } from "./binaryTreeImplementation";
 import { HashTable } from "./hashImplementation";
 
 const get_pair = (T: binaryTreeSearch, x: number) => {
-    /*
-        ter uma função que transforma uma arvore em um array e aplicar a questão 5.
-    */
-    let A: number[] = T.bts2array(T.getRoot()?.leftNode);
-    let B: number[] = T.bts2array(T.getRoot()?.rightNode);
+    let A: number[] = T.bts2array(T.getRoot()?.rightNode);
+    if (!A) return [];
 
-    if (!B || !A) return [];
+    const hashTable_A = new HashTable(A.length);
+    A.forEach(v => hashTable_A.insert(v));
 
-    const hashTable_B = new HashTable(B.length);
-    B.forEach(v => hashTable_B.insert(v));
+    let retorno: (number[]|undefined)[] = [];
 
-    return A
-        .map(v => {
-            if(x < v + T.getRoot()!.key) return;
-            const idxComplemento = hashTable_B.search(x - v);
+    // percorre a arvore da esquerda O(n)
+    const auxiliarSearch = (noh: node) => {
+        if(!noh) return;
+        auxiliarSearch(noh.leftNode);
+        const v = noh.key;
 
-            if (idxComplemento != -1) {
-                const complemento = hashTable_B.getTable()[idxComplemento];
-                return complemento!.key != v ? [v, complemento!.key] : complemento!.frequency > 1 ? [v, complemento!.key] : undefined;
-            }
-        })
-        .filter(v => v != undefined);
+        if(x < v + T.getRoot()!.key) return;
+        const idxComplemento = hashTable_A.search(x - v);
+
+        if (idxComplemento != -1) {
+            const complemento = hashTable_A.getTable()[idxComplemento];
+            retorno.push(complemento!.key != v ? [v, complemento!.key] : complemento!.frequency > 1 ? [v, complemento!.key] : undefined);
+        }
+        auxiliarSearch(noh.rightNode);
+    }
+    
+    auxiliarSearch(T.getRoot());
+    return retorno.filter(v => v != undefined);
 }
 
 // const bts = new binaryTreeSearch();
@@ -41,4 +45,4 @@ const get_pair = (T: binaryTreeSearch, x: number) => {
 // bts.insert(13);
 
 // bts.printTreeInorder();
-// console.log(get_pair(bts, 18))
+// console.log(get_pair(bts, 22))
