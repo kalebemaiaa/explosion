@@ -13,8 +13,9 @@ const get_kesimo = (A: number[], k: number): h_node|number => {
     const m = hashTable.getTable()
         .filter(v => v != null)
 
+    console.log(m)
     const retorno = quickSelect(m, 0,m.length - 1, m.length - k ,(a:h_node, b:h_node) => a.frequency - b.frequency);
     return retorno||-1;
 }
 
-console.log(get_kesimo([1, 7, 6, 22, 1, 7, 2, 3, 8, 1, 16], 1));
+console.log(get_kesimo([1, 7, 6, 22, 1, 7, 2, 3, 8, 1, 16], 2));
