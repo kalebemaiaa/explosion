@@ -3,11 +3,9 @@ import { h_node } from "./hashImplementation";
 
 function get_goodPivot<T>(A:T[], callback: (a: any, b: any) => number):[T, number] {
     const medians = [];
+
     for(let i = 0; i < A.length; i+=5) {
         const list_sorted = mergeSort(A.slice(i, i+5), callback);
-
-        // console.log("MINHA LISTA _> ", list_sorted)
-        //console.log("MINHA MEDIANA -> ", list_sorted[Math.floor(list_sorted.length/2)])
         
         // funciona para impares; no caso par, pega o de cima;
         medians.push(list_sorted[Math.floor(list_sorted.length/2)]);
