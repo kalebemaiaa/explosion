@@ -7,42 +7,30 @@
 
 const get_proximos = (A:number[], x:number, k:number) => {
     const n = A.length;
-    if(k > n) return [];
+    if(k > n || k == 0) return [];
     if(k == n) return A;
-    const arr: (number|null)[] = [];
+    const arr: number[] = [];
     for (let i = 0; i < k; i++) {
-        arr.push(null);
+        arr.push(A[i]);
     }
-    A.forEach(v => {
-        let maisProvavel: number = -1;
-        for(let i = 0; i < k; i++) {
-            const valorPassado  = arr[i];
-            if(valorPassado == null){ 
-                arr[i] = v;
-                return;
-            }
-            const difAtual = Math.abs(v - x), difPassada = Math.abs(valorPassado - x);
 
-            if(difAtual >= difPassada) continue;
-            if(maisProvavel == -1) {
-                maisProvavel = i;
-                continue;
-            }
-            if(difAtual < Math.abs(x - A[maisProvavel])) {
-                if(v== 0) console.log(arr);
-                maisProvavel = i;
-            }
+    const get_maxIdx = ():number => {
+        let mIdx = 0;
+        for(let i = 1; i < k; i++){
+            if(Math.abs(arr[i] - x) > Math.abs(arr[mIdx] - x))
+                mIdx = i;
         }
-        if(maisProvavel == -1) return;
-        arr[maisProvavel] = v;
-        /*
-            PROBLEMA:: ESTA SUBSTITUINDO SÓ UMA VEZ
-            ANTES DE SUBSTITUIR NO ARRAY (arr[maisProvavel] = v;)
-            FZR UM arr.map e ver qual tem a maior distancia em relação ao x;
-        */
-    })
+        return mIdx;
+    }
+    
+    for(let i = k; i < n; i++) {
+        const maxIdx = get_maxIdx();
+        if(Math.abs(A[i] - x) < Math.abs(arr[maxIdx] - x))
+            arr[maxIdx] = A[i];
+    }
+    
     return arr;
 }
 
 
-console.log(get_proximos([-4, 123, 0, 52,25, 5], 5, 2))
+console.log(get_proximos([-4, 123, 0, 52,25, 5], 5, 4))
