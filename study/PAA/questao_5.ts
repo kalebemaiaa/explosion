@@ -4,7 +4,7 @@
     soma e k, ou informe caso nao exista. O algoritmo deve ter complexidade ˜
     O(n) no pior caso.
 */
-import {HashTable} from "./hashImplementation";
+import {HashTable} from "../dataStructures/hash";
 
 const get_pair = (A: number[], k: number) => {
     const hashTable = new HashTable(A.length);

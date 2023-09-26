@@ -1,5 +1,5 @@
 import { mergeSort } from "../sorts/mergesort";
-import { h_node } from "./hashImplementation";
+import { h_node } from "../dataStructures/hash";
 
 function get_goodPivot<T>(A:T[], callback: (a: any, b: any) => number):[T, number] {
     const medians = [];
