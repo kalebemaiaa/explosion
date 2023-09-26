@@ -35,14 +35,3 @@ const get_pair = (T: binaryTreeSearch, x: number) => {
     auxiliarSearch(T.getRoot());
     return retorno.filter(v => v != undefined);
 }
-
-// const bts = new binaryTreeSearch();
-// bts.insert(10);
-// bts.insert(15);
-// bts.insert(7);
-// bts.insert(5);
-// bts.insert(9);
-// bts.insert(13);
-
-// bts.printTreeInorder();
-// console.log(get_pair(bts, 22))
