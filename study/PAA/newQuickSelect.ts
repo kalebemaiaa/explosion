@@ -31,12 +31,16 @@ function partition<T>(A:T[], callback:(a:any, b:any) => number):number {
     return i;
 }
 
-function quickSelect<T>(A:T[], k:number, callback: (a:any, b:any) => number){
+export function quickSelect<T>(A:T[], k:number, callback: (a:any, b:any) => number, resto:T[]){
     if(k <= 0 || k > A.length) return -1
     const idxPartition = partition(A, callback);
-    if(idxPartition == k - 1) return A[idxPartition];
-    if(idxPartition > k - 1) return quickSelect(A.slice(0, idxPartition), k, callback);
-    return quickSelect(A.slice(idxPartition+1), k - idxPartition - 1, callback)
+    if(idxPartition == k - 1){
+        console.log(resto)
+        return [A[idxPartition], A.length > k ?A :resto];
+    }
+    if(idxPartition > k - 1){
+        console.log(resto)
+        return quickSelect(A.slice(0, idxPartition), k, callback, A.slice(0, idxPartition + 1));
+    }
+    return quickSelect(A.slice(idxPartition+1), k - idxPartition - 1, callback, A.slice(0,idxPartition+1))
 }
-
-console.log(quickSelect([1,10,5,3,8,7], 5, (a, b) => b - a));

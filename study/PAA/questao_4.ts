@@ -4,7 +4,7 @@
     sendo k ≤ m. O algoritmo deve ter complexidade O(n)
 */
 import { HashTable, h_node } from "../dataStructures/hash";
-import { quickSelect } from "./quickSelect";
+import { quickSelect } from "./newQuickSelect";
 
 const get_kesimo = (A: number[], k: number) => {
     const hashTable = new HashTable(A.length);
@@ -14,8 +14,11 @@ const get_kesimo = (A: number[], k: number) => {
         .filter(v => v != null)
 
     console.log(m)
-    const retorno = quickSelect(m, 0,m.length - 1, m.length - k ,(a:h_node, b:h_node) => a.frequency - b.frequency);
-    return retorno[0]||-1;
+    const retorno = quickSelect(m, m.length - k ,(a:h_node, b:h_node) => a.frequency - b.frequency, m);
+    return retorno||-1;
 }
 
+/*
+    Arrumar essa questão pegando o retorno[0];
 console.log(get_kesimo([1, 7, 6, 22, 1, 7, 2, 3, 8, 1, 16], 2));
+*/

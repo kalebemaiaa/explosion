@@ -4,42 +4,29 @@
     crescente de proximidade. O algoritmo deve ter complexidade O(n log k) no 
     pior caso.
 */
-
-import { quickSelect } from "./quickSelect";
-
-const get_proximos = (A:number[], x:number, k:number) => {
-    const n = A.length;
-    if(k > n || k == 0) return [];
-    if(k == n) return A;
-    const arr: number[] = [];
-    for (let i = 0; i < k; i++) {
-        arr.push(A[i]);
-    }
-
-    const get_maxIdx = ():number => {
-        let mIdx = 0;
-        for(let i = 1; i < k; i++){
-            if(Math.abs(arr[i] - x) > Math.abs(arr[mIdx] - x))
-                mIdx = i;
-        }
-        return mIdx;
-    }
-    
-    for(let i = k; i < n; i++) {
-        const maxIdx = get_maxIdx();
-        if(Math.abs(A[i] - x) < Math.abs(arr[maxIdx] - x))
-            arr[maxIdx] = A[i];
-    }
-    
-    return arr;
-}
+import { mergeSort } from "../sorts/mergesort";
+import { quickSelect } from "./newQuickSelect";
 
 const get_proximos_v2 = (A:number[], x:number, k:number) => {
     const distances:any[] = [];
     A.forEach(v => distances.push({"distance": Math.abs(v - x), "valor": v}));
-    const re = quickSelect(distances, 0, distances.length - 1, k, (a:{"distance":number, "valor":number}, b:{"distance":number, "valor":number}) => a.distance - b.distance)
-    console.log(re)
+    // pediu os elementos ordenado por distancia, logo temos que n log k = n log n;
+    if(k == A.length) return mergeSort(distances, (a, b) => a.distance - b.distance).map(v => v.valor);
+
+    // quickselect o menor elemento;
+    const re = quickSelect(distances, k, (a, b) => a.distance - b.distance, distances);
+    if(re == -1) return [];
+    re[1].push(re[0]);
+    return k == 1 ?[re[0].valor] :mergeSort(re[1].length == k ?re[1] :re[1].slice(0,k), (a, b) => a.distance - b.distance).map((v:any) => v.valor);
 }
 
-console.log(get_proximos([-4, 123, 0, 52,25, 5], 5, 4))
-get_proximos_v2([-4, 123, 0, 52,25, 5], 5, 2)
+// for(let i = 0; i < 8; i++) {
+//     console.log(get_proximos_v2([-4, 123, 0, 52,25, 5], 5, i))
+// }
+console.log(get_proximos_v2([-4, 123, 0, 52,25, 5], 5, 5))
+
+/* 
+    nao funciona para o caso 5 porque o resto ta ficando a direito
+    mudar o quick select para fazer funcionar aqui;
+    verificar a questao 4;
+*/
