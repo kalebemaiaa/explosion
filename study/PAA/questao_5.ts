@@ -4,11 +4,11 @@
     soma e k, ou informe caso nao exista. O algoritmo deve ter complexidade ˜
     O(n) no pior caso.
 */
-import {HashTable} from "../dataStructures/hash";
+import { HashTable } from "../dataStructures/hash";
 
-const get_pair = (A: number[], k: number) => {
+const get_pair_vetor = (A: number[], k: number) => {
     const hashTable = new HashTable(A.length);
-    A.forEach(value => hashTable.insert(value));
+    A.forEach(v => hashTable.insert(v));
 
     const R = A
         .map(value => {
@@ -16,12 +16,17 @@ const get_pair = (A: number[], k: number) => {
 
             if (idxComplemento != -1) {
                 const complemento = hashTable.getTable()[idxComplemento];
-                return complemento!.key != value ? [value, complemento!.key] : complemento!.frequency > 1 ? [value, complemento!.key] : undefined;
+                return complemento!.key != value
+                    ? [value, complemento!.key]
+                    : complemento!.frequency > 1
+                        ? [value, complemento!.key]
+                        : undefined;
             }
         })
-        .filter(v => v != undefined);
-
-    // Caso fosse para retorna o primeiro par, seria R[0]
-    if (R.length != 0) return R;
-    console.log(`Não houve nenhum par de elementos da lsita cuja soma fosse ${k}!`);
+        .filter(v => v != undefined)
+    if (R.length == 0)
+        console.log(`Não houve nenhum par de elementos da lista cuja soma fosse ${k}!`);
+    return R
 }
+
+get_pair_vetor([1], 0)

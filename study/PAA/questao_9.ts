@@ -5,7 +5,7 @@
     nao possuem nenhum elemento em ˜ A. O algoritmo deve ter complexidade
     O(n + m · k) no pior caso.
 */
-import {HashTable} from "../dataStructures/hash";
+import { HashTable } from "../dataStructures/hash";
 
 const get_elements = (A: number[], B: number[][]): number[][] => {
     const n: number = A.length;

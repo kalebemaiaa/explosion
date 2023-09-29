@@ -6,7 +6,7 @@ interface t_node{
     rightNode: node;
 }
 
-export class binaryTreeSearch {
+export class BinaryTreeSearch {
     private root: node = null;
 
     constructor(n?:number) {
@@ -57,13 +57,13 @@ export class binaryTreeSearch {
         this.auxiliarPrintTree(noh.rightNode, tabs + 1, 1);
     }
 
-    bts2array(noh?:node):number[] {
-        let btsArray:number[] = [];
+    bts2array(noh?:node):t_node[] {
+        let btsArray:t_node[] = [];
 
         const auxiliarToArray = (noh: node) => {
             if(!noh) return;
             auxiliarToArray(noh.leftNode);
-            btsArray.push(noh.key);
+            btsArray.push(noh);
             auxiliarToArray(noh.rightNode);
         }
         

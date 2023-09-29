@@ -7,26 +7,35 @@
 import { mergeSort } from "../sorts/mergesort";
 import { quickSelect } from "./newQuickSelect";
 
-const get_proximos_v2 = (A:number[], x:number, k:number) => {
-    const distances:any[] = [];
-    A.forEach(v => distances.push({"distance": Math.abs(v - x), "valor": v}));
-    // pediu os elementos ordenado por distancia, logo temos que n log k = n log n;
-    if(k == A.length) return mergeSort(distances, (a, b) => a.distance - b.distance).map(v => v.valor);
+const get_nearest = (A: number[], x: number, k: number) => {
+    const distances: {
+        "distance": number,
+        "valor": number
+    }[] = [];
 
-    // quickselect o menor elemento;
-    const re = quickSelect(distances, k, (a, b) => a.distance - b.distance, distances);
-    if(re == -1) return [];
-    re[1].push(re[0]);
-    return k == 1 ?[re[0].valor] :mergeSort(re[1].length == k ?re[1] :re[1].slice(0,k), (a, b) => a.distance - b.distance).map((v:any) => v.valor);
+    A.forEach(v => distances.push({
+        "distance": Math.abs(v - x),
+        "valor": v
+    }));
+
+    /*
+        Caso k == n, então temos que n log k = n log n;
+        Então basta ordenar pela distancia;
+    */
+    if (k == A.length)
+        return mergeSort(distances, (a, b) => a.distance - b.distance)
+            .map(v => v.valor);
+
+    /*            
+        quickselect o menor elemento e retorna a A alterada;
+        Sabemos q todos elementos na esquerda sao menores, 
+        entao basta ordena-los por distancia;
+    */
+    const [A_alterado, idxKesimo] = quickSelect(distances, k,
+        (a, b) => b.distance - a.distance);
+
+    return mergeSort(A_alterado.slice(0, idxKesimo + 1),
+        (a, b) => a.distance - b.distance).map((v: any) => v.valor);
 }
 
-// for(let i = 0; i < 8; i++) {
-//     console.log(get_proximos_v2([-4, 123, 0, 52,25, 5], 5, i))
-// }
-console.log(get_proximos_v2([-4, 123, 0, 52,25, 5], 5, 5))
-
-/* 
-    nao funciona para o caso 5 porque o resto ta ficando a direito
-    mudar o quick select para fazer funcionar aqui;
-    verificar a questao 4;
-*/
+console.log(get_nearest([-4, 123, 0, 52, 25, 5, 22, 35, 2, -15, 105, 504], 5, 1))
