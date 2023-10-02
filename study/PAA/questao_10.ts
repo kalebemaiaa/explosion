@@ -12,22 +12,24 @@ const get_list = (A: number[], x: number): number[] => {
     if (n == 1) return A;
 
     const A_ordenado = mergeSort(A, (a: number, b: number) => a - b);
-    let maxSize = 0, startIndex = 0;
+    let maxSize = 0, j = 0, startIndex = 0;
 
-    for (let i = 1; i < n;) {
-        let sizeAtual = 0, beginIdx = i;
-        while (A_ordenado[i] - A_ordenado[beginIdx] <= x && i < n) {
-            sizeAtual++;
-            i++;
+    for(let i = 0; i < n; i++) {
+        while(j < n && A_ordenado[j] - A_ordenado[i] <= x) {
+            j++;
         }
 
-        if (sizeAtual > maxSize) {
+        const sizeAtual = j - i;
+
+        if(sizeAtual > maxSize) {
             maxSize = sizeAtual;
-            startIndex = beginIdx == 1 && A[sizeAtual] - A[0] <= x ? 0 : beginIdx;
+            startIndex = i;
         }
-
-        if (i == beginIdx) i++;
+        if(j == n) break;
     }
 
     return A_ordenado.slice(startIndex, startIndex + maxSize);
 }
+
+
+console.log(get_list([1,2,3,4,4,5,5,5,5,7,10], 3));
