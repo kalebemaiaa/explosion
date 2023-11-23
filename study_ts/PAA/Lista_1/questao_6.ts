@@ -4,8 +4,8 @@
     um da subarvore esquerda e outro da sub ´ arvore direita da raiz, cuja soma ´
     seja igual a x. O algoritmo deve ter complexidade O(n) no pior caso.
 */
-import { BinaryTreeSearch, node } from "../dataStructures/binaryTree";
-import { HashTable } from "../dataStructures/hash";
+import { BinaryTreeSearch, node } from "../../dataStructures/binaryTree";
+import { HashTable } from "../../dataStructures/hash";
 
 const get_pair_tree = (T: BinaryTreeSearch, x: number) => {
     let A = T.bts2array(T.getRoot()?.rightNode);

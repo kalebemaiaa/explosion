@@ -1,4 +1,4 @@
-import { mergeSort } from "../sorts/mergesort";
+import { mergeSort } from "../../sorts/mergesort";
 
 function get_goodPivot<T>(A: T[],
     callback: (a: any, b: any) => number): T {

@@ -3,7 +3,7 @@
     um algoritmo que retorne o k-esimo n ´ umero que mais se repete na lista, ´
     sendo k ≤ m. O algoritmo deve ter complexidade O(n)
 */
-import { HashTable, h_node } from "../dataStructures/hash";
+import { HashTable, h_node } from "../../dataStructures/hash";
 import { quickSelect } from "./newQuickSelect";
 
 const get_kesimo = (A: number[], k: number) => {

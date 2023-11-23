@@ -3,7 +3,7 @@
     que encontre o par de elementos (a, b) onde a ∈ A e b ∈ B, de modo que a distancia 
     entre ˆ a e b seja m´ınima. O algoritmo deve ter complexidade O(n log n) no pior caso.
 */
-import { mergeSort } from "../sorts/mergesort";
+import { mergeSort } from "../../sorts/mergesort";
 
 const get_min_distance = (A: number[], B: number[]):
     [number, number] | null => {

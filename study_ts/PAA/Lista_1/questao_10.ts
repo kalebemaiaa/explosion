@@ -4,7 +4,7 @@
     de A cuja maior diferenc¸a entre dois elementos de B seja menor ou igual a
     x. O algoritmo deve ter complexidade O(n log n) no pior caso.
 */
-import { mergeSort } from "../sorts/mergesort";
+import { mergeSort } from "../../sorts/mergesort";
 
 const get_list = (A: number[], x: number): number[] => {
     const n = A.length;

@@ -4,7 +4,7 @@
     crescente de proximidade. O algoritmo deve ter complexidade O(n log k) no 
     pior caso.
 */
-import { mergeSort } from "../sorts/mergesort";
+import { mergeSort } from "../../sorts/mergesort";
 import { quickSelect } from "./newQuickSelect";
 
 const get_nearest = (A: number[], x: number, k: number) => {

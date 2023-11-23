@@ -3,10 +3,35 @@
 
 using namespace std;
 
+class Edge{
+    public:
+    Edge(int v1, int v2, int peso = 1) {
+        this->v1=v1;
+        this->v2=v2;
+        this->peso=peso;
+    }
+
+    int vertex_from() {
+        return this-> v1;
+    }
+
+    int get_vertex_to() {
+        return this-> v2;
+    }
+
+    int get_weight() {
+        return this->peso;
+    }
+
+    private:
+    int v1;
+    int v2;
+    int peso;
+};
+
 struct edgeNode
 {
-    int peso;
-    int vertex;
+    Edge edge;
     edgeNode *next;
 };
 
@@ -16,24 +41,24 @@ public:
     GraphAdjList(int vertexNum)
     {
         this->vertexNum = vertexNum;
-        // this->m_edges = (edgeNode **)malloc(vertexNum * sizeof(edgeNode *));
-        // for (int i = 0; i < vertexNum; i++)
-        // {
-        //     (this->m_edges)[i] = nullptr;
-        // }
+        this->m_edges = (edgeNode **) malloc(sizeof(edgeNode *) * vertexNum);
+        for(int i = 0; i < vertexNum; i++){
+            this->m_edges[i] == nullptr;
+        }
     }
 
-    ~GraphAdjList()
-    {
-        for(int i = 0; i < this->vertexNum; i++){
-            edgeNode *cur = *(this->m_edges + i);
-            while(cur -> next != nullptr){
-                edgeNode *lixo = cur -> next;
-                cur -> next = lixo -> next;
+    ~GraphAdjList(){
+        for(int i = 0; i < this-> vertexNum; i++){
+            edgeNode *cur = this->m_edges[i];
+            if(!cur) continue;
+            while (cur->next)
+            {
+                edgeNode *lixo = cur->next;
+                cur-> next = lixo -> next;
                 free(lixo);
             }
+            free(cur);
         }
-        free(this->m_edges);
     }
 
     void addEdge(int v1, int v2, int peso = 1)
@@ -47,9 +72,7 @@ public:
         // cria novo noh
         edgeNode *newNode = (edgeNode *)malloc(sizeof(edgeNode));
         newNode->next = nullptr;
-        newNode->peso = peso;
-        newNode->vertex = v2;
-
+        newNode->edge = Edge(v1, v2, peso);
         edgeNode *cur = (this->m_edges)[v1];
 
         // se n tem nenhumnoh, insere
@@ -60,7 +83,7 @@ public:
         }
 
         // se o primeiro for maior que o que ira ser inserido, muda;
-        if (newNode->vertex < cur->vertex)
+        if (newNode->edge.get_vertex_to() < v2)
         {
             newNode->next = cur;
             (this->m_edges)[v1] = newNode;
@@ -69,7 +92,7 @@ public:
 
         while (cur->next != nullptr)
         {
-            if (cur->next->vertex > newNode->vertex)
+            if (cur->next->edge.get_vertex_to() > newNode->edge.get_vertex_to())
                 break;
             cur = cur->next;
         }
@@ -90,7 +113,7 @@ public:
             return;
 
         this->edgeNum --;
-        if ((this->m_edges)[v1]->vertex == v2)
+        if ((this->m_edges)[v1]->edge.get_vertex_to() == v2)
         {
             edgeNode *lixo = (this->m_edges)[v1];
             (this->m_edges)[v1] = lixo->next;
@@ -99,7 +122,7 @@ public:
         }
         for (edgeNode *cur = (this->m_edges)[v1]; cur->next != nullptr; cur = cur->next)
         {
-            if (cur->next->vertex != v2)
+            if (cur->next->edge.get_vertex_to() != v2)
                 continue;
 
             edgeNode *lixo = cur->next;
@@ -117,19 +140,10 @@ public:
         {
             for (edgeNode *cur = (this->m_edges)[i]; cur != nullptr; cur = cur->next)
             {
-                cout << "(" << i << ", " << cur->vertex << ", peso: " << cur->peso << ")  ";
+                cout << "(" << i << ", " << cur->edge.get_vertex_to() << ", peso: " << cur->edge.get_weight() << ")  ";
             }
             cout << endl;
         }
-    }
-
-    /*
-        Essa função não deve ser utilizada com frequência pois
-        retorna o ponteiro para os nos;
-    */
-    edgeNode **getTabelEdges()
-    {
-        return this->m_edges;
     }
 
     int getVertexNum()
@@ -149,7 +163,7 @@ public:
         }
         edgeNode *cur = (this->m_edges)[v1];
         while(cur != nullptr){
-            if(cur -> vertex == v2) return true;
+            if(cur -> edge.get_vertex_to() == v2) return true;
         }
 
         return false;
@@ -157,7 +171,7 @@ public:
 
     bool isSubGraph(GraphAdjList &g)
     {
-        edgeNode **table = g.getTabelEdges();
+        edgeNode **table = g.m_edges;
         int n = g.getVertexNum();
         if (n > this->vertexNum)
             return false;
@@ -165,9 +179,9 @@ public:
         {
             for (edgeNode *cur = table[i], *curThis = (this->m_edges)[i]; cur != nullptr; cur = cur->next)
             {
-                while (curThis->vertex != cur->vertex && curThis != nullptr)
+                while (curThis->edge.get_vertex_to() != cur->edge.get_vertex_to() && curThis != nullptr)
                 {
-                    if (curThis->vertex > cur->vertex)
+                    if (curThis->edge.get_vertex_to() > cur->edge.get_vertex_to())
                         return false;
                     curThis = curThis->next;
                 }
@@ -187,9 +201,9 @@ public:
             edgeNode *cur = (this->m_edges)[path[i - 1]];
             while (cur != nullptr)
             {
-                if (cur->vertex > i)
+                if (cur->edge.get_vertex_to() > i)
                     return false;
-                if (cur->vertex == i)
+                if (cur->edge.get_vertex_to() == i)
                     break;
                 cur = cur->next;
             }
@@ -203,34 +217,10 @@ public:
     bool isTopologic() {
         for(int i = 0; i < this->vertexNum; i++) {
             if((this->m_edges)[i] == nullptr) continue;
-            if((this->m_edges)[i] -> vertex > i) continue;
+            if((this->m_edges)[i] -> edge.get_vertex_to() > i) continue;
             return false;
         }
         return true;
-    }
-
-    // int *topologicGraph(){
-    //     int *v = (int*) malloc(sizeof(int) * this->vertexNum);
-    //     for(int i = 0; i < this->vertexNum; i++){
-    //         v[i] = -1;
-    //     }
-
-    //     for(int i = 0; i < this->vertexNum; i++){
-    //         if((this->m_edges)[i]!=nullptr) continue;
-
-    //     }
-    // }
-
-    // int *topologicGraph() {
-    //     int *v = (int*) malloc(sizeof(int) * this->vertexNum);
-    //     for(int i = 0; i < this->vertexNum; i++){
-    //         v[i] = -1;
-    //     }
-
-
-    // }
-
-    void dfs(){
     }
 
     void paths_dijkstra(int v0, int *parents, int *distances) {
@@ -248,30 +238,70 @@ public:
             int min_dist = INT16_MAX;
             int v1 = -1;
             for(int i = 0; i < this->vertexNum; i++){
-                if(checked[i] == 0) continue;
+                if(checked[i]) continue;
                 if(distances[i] < min_dist) {
                     min_dist = distances[i];
                     v1 = i;
                 }
-                if(min_dist == INT16_MAX) break;
-                edgeNode *edge = this->m_edges[v1];
-                while(edge) {
-                    int v2 = edge -> vertex;
-                    if(!checked[v2]){
-                        int peso = edge -> peso;
-                        if(peso + distances[v1] < distances[v2]) {
-                            parents[v2] = v1;
-                            distances[v2] = distances[v1] + peso;
-                        }
+            }
+            if(min_dist == INT16_MAX) break;
+            edgeNode *edge = this->m_edges[v1];
+            while(edge) {
+                int v2 = edge -> edge.get_vertex_to();
+                if(!checked[v2]){
+                    int peso = edge -> edge.get_weight();
+                    if(peso + distances[v1] < distances[v2]) {
+                        parents[v2] = v1;
+                        distances[v2] = distances[v1] + peso;
                     }
+                }
+                edge = edge -> next;
+            }
+
+            checked[v1] = true;
+        }
+    }
+
+    void kruskal_mst(Edge *edges){
+        int group[this->vertexNum];
+        for(int i = 0; i < this->vertexNum; i++) {
+            group[i] = i;
+        }
+        int k = 0;
+        while(true) {
+            int min_cost = INT16_MAX;
+            int min_v1, min_v2 = -1;
+            for(int v1 = 0; v1 < this->vertexNum; v1++){
+                edgeNode *edge = this->m_edges[v1];
+                while (edge)
+                {
+                    int v2 = edge->edge.get_vertex_to();
+                    int peso = edge->edge.get_weight();
+
+                    if(v1 < v2 && group[v1] != group[v2] && peso < min_cost) {
+                        min_cost = peso;
+                        min_v1 = v1;
+                        min_v2 = v2;
+                    }
+
                     edge = edge -> next;
                 }
+            }
 
-                checked[v1] = true;
+            if(min_cost == INT16_MAX) return;
+            edges[k++] = Edge(min_v1, min_v2, min_cost);
+            int leaderV1 = group[min_v1];
+            int leaderV2 = group[min_v2];
+
+            for(int i = 0; i < this->vertexNum; i++) {
+                if(group[i] == leaderV2){
+                    group[i] = leaderV1;
+                }
             }
         }
     }
 
+    int * get_path_otimo(int vA, int vB);
 private:
     int vertexNum = 0;
     int edgeNum = 0;
